@@ -5,4 +5,5 @@
 	(lib (name "power")(type "KiCad")(uri "${KICAD9_SYMBOL_DIR}/power.kicad_sym")(options "")(descr "KiCad stock"))
 	(lib (name "Connector")(type "KiCad")(uri "${KICAD9_SYMBOL_DIR}/Connector.kicad_sym")(options "")(descr "KiCad stock"))
 	(lib (name "Jumper")(type "KiCad")(uri "${KICAD9_SYMBOL_DIR}/Jumper.kicad_sym")(options "")(descr "KiCad stock"))
+	(lib (name "Mechanical")(type "KiCad")(uri "${KICAD9_SYMBOL_DIR}/Mechanical.kicad_sym")(options "")(descr "KiCad stock"))
 )

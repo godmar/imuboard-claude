@@ -36,6 +36,10 @@ COMPONENTS = {
     'JP1': ('Jumper:SolderJumper_2_Bridged', 'I2C_PU',
             'Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm',
             {'1': '+3V3', '2': 'I2C_PU'}, {}),
+    'H1': ('Mechanical:MountingHole', 'MountingHole_M2',
+           'MountingHole:MountingHole_2.2mm_M2', {}, {}),
+    'H2': ('Mechanical:MountingHole', 'MountingHole_M2',
+           'MountingHole:MountingHole_2.2mm_M2', {}, {}),
     'J1': ('Connector:Conn_01x08_Pin', 'Conn_01x08',
            'Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical',
            {str(i + 1): n for i, n in enumerate(HEADER)}, {}),
@@ -43,8 +47,8 @@ COMPONENTS = {
 
 POWER_NETS = ('+3V3', 'GND')
 
-# Solder jumpers are copper only, not purchased parts.
-NOT_IN_BOM = {'JP1'}
+# Solder jumpers and mounting holes are not purchased parts.
+NOT_IN_BOM = {'JP1', 'H1', 'H2'}
 
 # Footprint present but not populated by default.
 DNP = {}

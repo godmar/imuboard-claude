@@ -4,8 +4,10 @@ set -e
 cd "$(dirname "$0")/.."
 P=lsm6dsv32x_breakout
 
+mkdir -p fab
 python3 tools/gen_schematic.py
-python3 tools/gen_pcb.py 2>&1 | grep -v 'memory leak' || true
+python3 tools/gen_pcb.py > fab/gen_pcb.log 2>&1 || { grep -v 'memory leak' fab/gen_pcb.log; exit 1; }
+rm -f fab/gen_pcb.log
 
 kicad-cli sch erc --severity-all --exit-code-violations -o fab/erc.rpt $P.kicad_sch
 kicad-cli pcb drc --severity-all --schematic-parity --exit-code-violations -o fab/drc.rpt $P.kicad_pcb

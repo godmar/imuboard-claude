@@ -6,7 +6,8 @@ section 7.1).
 
 | | |
 |---|---|
-| Board size | **20.32 × 7.0 mm**, 2 layers, 1.6 mm FR4. The width is set by the 8-pin header. |
+| Board size | **20.32 × 10.2 mm**, 2 layers, 1.6 mm FR4. The width is set by the 8-pin header; the height meets JLCPCB's 10 × 10 mm minimum for assembly. |
+| Mounting | Two M2 holes (2.2 mm, non-plated) in the top corners, 15.72 mm apart, 1.9 mm from the top edge. There is no copper within 2 mm of each hole, so a screw head or washer can't short anything. |
 | Supply | 3.3 V only. VDD and VDDIO are tied together; there is no regulator or level shifter. |
 | Interface | I²C / I3C (default) or SPI (3/4-wire) |
 | I²C address | **0x6B** (SA0 pulled up by R3). Drive SDO low for 0x6A. |
@@ -69,6 +70,7 @@ overwrites those edits.
 - Tracks 0.2 mm for signals, 0.3 mm for 3V3
 - Vias 0.5 mm diameter / 0.3 mm drill, tented
 - Copper to board edge 0.25 mm
+- Copper keepout of 2 mm radius around each mounting hole
 
 These are within standard JLCPCB/PCBWay 2-layer capabilities. The LGA-14 needs stencil and
 reflow (or hot air) assembly.

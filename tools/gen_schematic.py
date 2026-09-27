@@ -89,7 +89,7 @@ def write_symbol_lib():
         f.write('\t(lib (name "imuboard")(type "KiCad")(uri "${KIPRJMOD}/imuboard.kicad_sym")'
                 '(options "")(descr "LSM6DSV32X breakout project symbols"))\n')
         # Stock libraries too, so the project resolves even without a global table.
-        for lib in ('Device', 'power', 'Connector', 'Jumper'):
+        for lib in ('Device', 'power', 'Connector', 'Jumper', 'Mechanical'):
             f.write('\t(lib (name "%s")(type "KiCad")(uri "${KICAD9_SYMBOL_DIR}/%s.kicad_sym")'
                     '(options "")(descr "KiCad stock"))\n' % (lib, lib))
         f.write(')\n')
@@ -298,6 +298,8 @@ def main():
     s.place_part('JP1', 58 * g, 50 * g, stub=g)
     s.place_part('R1', 66 * g, 50 * g, stub=0)
     s.place_part('R2', 70 * g, 50 * g, stub=0)
+    s.place_part('H1', 80 * g, 36 * g)
+    s.place_part('H2', 84 * g, 36 * g)
 
     # PWR_FLAGs: flag -- short wire -- power symbol.
     for i, net in enumerate(('+3V3', 'GND')):
@@ -314,7 +316,8 @@ def main():
            '- JP1 (bridged by default) enables the 10k SCL/SDA pull-ups. Cut it to remove them.\n'
            '- SDx/SCx tied to GND (analog hub / Qvar / sensor hub not used), OCS_Aux/SDO_Aux left open\n'
            '  per datasheet Table 2 / Figure 28.\n'
-           '- C3 (4.7uF) is DNP: optional bulk capacitor for noisy or long 3.3 V wiring.', 30 * g, 64 * g)
+           '- C3 (4.7uF): optional bulk capacitor for noisy or long 3.3 V wiring%s.'
+           % (' (DNP)' if 'C3' in DNP else ''), 30 * g, 64 * g)
     s.text('SPI: SCL=SPC, SDA=SDI, SDO=SDO, CS=nCS', 40 * g, 24 * g)
 
     s.write(os.path.join(ROOT, PROJECT + '.kicad_sch'))

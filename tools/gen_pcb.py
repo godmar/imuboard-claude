@@ -6,8 +6,13 @@ Needs KiCad's pcbnew Python module (system python3 on Linux):
     python3 tools/gen_pcb.py
 
 All coordinates below are mm relative to the board's top-left corner.
-Board: 20.32 x 7.0 mm, 2 layers, all SMD parts on top, 1x8 2.54 mm header
-fitted from the bottom (plastic spacer underneath, so it can't hit top parts).
+Board: 20.32 x 10.2 mm (JLCPCB assembly needs >= 10 x 10 mm), 2 layers, all
+SMD parts on top, 1x8 2.54 mm header fitted from the bottom (plastic spacer
+underneath, so it can't hit top parts), two M2 mounting holes along the top.
+
+Circuit coordinates (PLACEMENT, VIAS, TRACKS) are relative to the circuit
+area, which sits DY below the board's top edge; the band above it holds the
+mounting holes.
 """
 import json
 import os
@@ -20,7 +25,8 @@ NC_PIN_NAMES = {('U1', '10'): 'OCS_Aux', ('U1', '11'): 'SDO_Aux'}
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FPDIR = '/usr/share/kicad/footprints'
 OX, OY = 100.0, 100.0            # board origin on the KiCad canvas
-W, H = 20.32, 7.0                 # board size
+W, H = 20.32, 10.2                # board size
+DY = 3.2                          # circuit area offset below the top edge
 HY = H - 1.27                     # header row
 CORNER_R = 0.5
 
@@ -31,17 +37,24 @@ def P(x, y):
     return pcbnew.VECTOR2I(mm(OX + x), mm(OY + y))
 
 
+def C(x, y):
+    """Point in circuit-area coordinates."""
+    return P(x, y + DY)
+
+
 # ------------------------------------------------------------------ placement
 PLACEMENT = {                     # ref: (x, y, rotation_deg)
     'U1': (11.43, 2.30, 180),     # rotated so CS/SCL/SDA face the header
     'C1': (14.20, 0.70, 0),       # Vdd_IO decoupling
     'C2': (8.60, 0.70, 180),      # Vdd decoupling
-    'C3': (6.20, 0.70, 0),        # optional bulk, DNP
+    'C3': (6.20, 0.70, 0),        # optional bulk
     'R3': (16.00, 2.30, 0),       # SDO/SA0 pull-up
     'JP1': (2.20, 2.90, 270),     # pull-up enable
     'R2': (4.40, 3.20, 0),        # SDA pull-up
     'R1': (4.40, 4.15, 0),        # SCL pull-up
 }
+
+HOLES = {'H1': (2.30, 1.90), 'H2': (W - 2.30, 1.90)}   # board coordinates
 
 VIAS = [                          # net, x, y
     ('GND', 7.40, 0.70), ('GND', 13.40, 2.30), ('GND', 15.40, 0.70),
@@ -218,25 +231,50 @@ def arrow(board, a, b, head=0.35, shaft=0.12):
 
 
 def silk(board):
+    """Silkscreen; coordinates are board coordinates."""
     # Header pin names: back side (visible when looking at the solder side).
     for i, name in enumerate(HEADER):
         x = 1.27 + 2.54 * i
-        text(board, name.replace('+', ''), x, BACK_LABEL_Y, pcbnew.B_SilkS, h=0.7, w=0.5)
-    text(board, 'LSM6DSV32X', 3.6, 1.0, pcbnew.B_SilkS, h=0.8, w=0.55)
-    text(board, 'I2C 0x6B', 18.0, 1.0, pcbnew.B_SilkS, h=0.7, w=0.5)
-    text(board, 'JP1 cut: no I2C pull-ups', 6.3, 2.3, pcbnew.B_SilkS, h=0.55, w=0.45,
+        text(board, name.replace('+', ''), x, BACK_LABEL_Y + DY, pcbnew.B_SilkS, h=0.7, w=0.5)
+    text(board, 'LSM6DSV32X', W / 2, 1.2, pcbnew.B_SilkS, h=0.8, w=0.6)
+    text(board, 'I2C 0x6B', W / 2, 2.4, pcbnew.B_SilkS, h=0.7, w=0.5)
+    text(board, 'JP1 cut: no I2C pull-ups', 6.3, 2.3 + DY, pcbnew.B_SilkS, h=0.55, w=0.45,
          thick=0.1)
-    # Front: axis marker.  U1 is rotated 180 deg, so +X points left and +Y
-    # points toward the header (down in this view); Z comes out of the board.
-    o = (19.30, 0.60)
-    arrow(board, (o[0] - 0.4, o[1]), (17.85, o[1]))
-    arrow(board, (o[0], o[1] + 0.4), (o[0], 2.0))
+    # Front, in the band between the mounting holes: name and axis marker.
+    # U1 is rotated 180 deg, so +X points left and +Y points toward the
+    # header (down in this view); Z comes out of the board.
+    text(board, 'LSM6DSV32X', 8.2, 1.4, pcbnew.F_SilkS, h=0.8, w=0.6)
+    o = (14.40, 1.00)
+    arrow(board, (o[0] - 0.4, o[1]), (12.85, o[1]))
+    arrow(board, (o[0], o[1] + 0.4), (o[0], 2.6))
     circle(board, o, 0.25, width=0.1)
     circle(board, o, 0.07, width=0.1)
-    text(board, 'X', 17.45, o[1], pcbnew.F_SilkS, h=0.55, w=0.5, thick=0.1)
-    text(board, 'Y', 19.80, 1.75, pcbnew.F_SilkS, h=0.55, w=0.5, thick=0.1)
+    text(board, 'X', 12.45, o[1], pcbnew.F_SilkS, h=0.55, w=0.5, thick=0.1)
+    text(board, 'Y', 14.90, 2.3, pcbnew.F_SilkS, h=0.55, w=0.5, thick=0.1)
     # U1 pin-1 dot (pin 1 is the bottom-right corner after rotation).
-    circle(board, (13.25, 3.55), 0.1, fill=True)
+    circle(board, (13.25, 3.55 + DY), 0.1, fill=True)
+
+
+def hole_keepout(board, center, r=2.0):
+    """No copper under the M2 screw head / washer (both layers)."""
+    import math
+    z = pcbnew.ZONE(board)
+    z.SetIsRuleArea(True)
+    ls = pcbnew.LSET()
+    ls.AddLayer(pcbnew.F_Cu)
+    ls.AddLayer(pcbnew.B_Cu)
+    z.SetLayerSet(ls)
+    z.SetDoNotAllowCopperPour(True)
+    z.SetDoNotAllowTracks(True)
+    z.SetDoNotAllowVias(True)
+    z.SetDoNotAllowPads(False)
+    z.SetDoNotAllowFootprints(False)
+    ol = z.Outline()
+    ol.NewOutline()
+    for k in range(32):
+        a = 2 * math.pi * k / 32
+        ol.Append(mm(OX + center[0] + r * math.cos(a)), mm(OY + center[1] + r * math.sin(a)))
+    board.Add(z)
 
 
 def zone(board, net, layer):
@@ -303,9 +341,12 @@ def main():
                 raise RuntimeError('J1 orientation')
             fp.SetPosition(fp.GetPosition() + (P(1.27, HY) - p1))
             strip_silk(fp, pcbnew.B_Fab)
+        elif ref in HOLES:
+            fp.SetPosition(P(*HOLES[ref]))
+            strip_silk(fp, pcbnew.F_Fab)
         else:
             x, y, rot = PLACEMENT[ref]
-            fp.SetPosition(P(x, y))
+            fp.SetPosition(C(x, y))
             fp.SetOrientationDegrees(rot)
             strip_silk(fp, pcbnew.F_Fab)
         fp.SetDNP(ref in DNP)
@@ -327,7 +368,7 @@ def main():
             pad = fps[ref].FindPadByNumber(num)
             assert pad.GetNetCode() == nets[net].GetNetCode(), (p, pad.GetNetname(), net)
             return pad.GetPosition()
-        return P(*p)
+        return C(*p)
 
     layer_id = {F: pcbnew.F_Cu, B: pcbnew.B_Cu}
     for net, layer, width, pts in TRACKS:
@@ -345,7 +386,7 @@ def main():
         v = pcbnew.PCB_VIA(board)
         v.SetViaType(pcbnew.VIATYPE_THROUGH)
         v.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
-        v.SetPosition(P(x, y))
+        v.SetPosition(C(x, y))
         v.SetWidth(mm(0.5))
         v.SetDrill(mm(0.3))
         v.SetNet(nets[net])
@@ -353,6 +394,8 @@ def main():
 
     outline(board)
     silk(board)
+    for c in HOLES.values():
+        hole_keepout(board, c)
     zones = [zone(board, nets['GND'], pcbnew.F_Cu), zone(board, nets['GND'], pcbnew.B_Cu)]
     pcbnew.ZONE_FILLER(board).Fill(board.Zones())
 
