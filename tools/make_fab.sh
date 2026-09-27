@@ -25,6 +25,8 @@ kicad-cli sch export bom --fields 'Reference,Value,Footprint,MPN,Note,${QUANTITY
     --labels 'Refs,Value,Footprint,MPN,Note,Qty' --group-by Value,Footprint \
     --exclude-dnp -o fab/${P}_bom.csv $P.kicad_sch
 
+python3 tools/jlc_files.py fab/${P}_pos_top.csv fab/${P}_bom.csv fab/${P}
+
 kicad-cli sch export pdf -o fab/${P}_schematic.pdf $P.kicad_sch
 kicad-cli pcb export pdf --layers F.Cu,F.Silkscreen,F.Fab,Edge.Cuts --mode-single \
     -o fab/${P}_assembly_top.pdf $P.kicad_pcb

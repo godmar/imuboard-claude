@@ -48,6 +48,7 @@ crossings. The pin names are printed on the back silkscreen.
 | `imuboard.kicad_sym`, `sym-lib-table` | Project symbol library (LSM6DSV32X symbol) |
 | `fab/lsm6dsv32x_breakout_gerbers.zip` | Gerbers + Excellon drill files, ready to upload |
 | `fab/*_bom.csv`, `fab/*_pos_top.csv` | BOM and top-side pick-and-place file (origin: bottom-left corner) |
+| `fab/*_bom_jlcpcb.xlsx`, `fab/*_cpl_jlcpcb.xlsx` (+ `.csv`) | The same in JLCPCB's assembly upload format, matching their sample files (SMD parts only; J1 is fitted by hand) |
 | `fab/*_schematic.pdf`, `fab/*_assembly_top.pdf` | Printable schematic and assembly drawing |
 | `fab/erc.rpt`, `fab/drc.rpt` | Check reports (0 ERC, 0 DRC, 0 unconnected, 0 schematic-parity issues) |
 | `tools/` | Generator scripts that produce the files above |
