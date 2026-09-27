@@ -27,9 +27,7 @@ crossings. The pin names are printed on the back silkscreen.
 ## Circuit notes
 
 - C1 / C2: 100 nF ceramic on VDDIO and VDD, placed next to the supply pins (datasheet Table 2 note 2, section 7.1).
-- C3: 4.7 µF footprint on 3V3, **not populated** by default (not required by the datasheet). Fit it if
-  the board is fed through long wires or from a noisy robot supply. It is left out of the BOM and
-  pick-and-place files.
+- C3: 4.7 µF footprint on 3V3; may help if the board is fed through long wires or from a noisy robot supply. 
 - R1 / R2: 10 k pull-ups on SCL / SDA (R<sub>pu</sub> = 10 kΩ per Figure 28), enabled through **JP1**, a solder jumper that is bridged by
   default. Cut the trace between its pads to remove the pull-ups, for example when the bus already
   has pull-ups or when using SPI.
