@@ -1,0 +1,6 @@
+"Refs","Value","Footprint","MPN","Note","Qty"
+"C1,C2","100nF","Capacitor_SMD:C_0402_1005Metric","","Vdd decoupling,Vdd_IO decoupling","2"
+"C3","4.7uF","Capacitor_SMD:C_0402_1005Metric","","optional bulk for noisy/long supply wiring, X5R 6.3V+","1"
+"J1","Conn_01x08","Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical","","","1"
+"R1-R3","10k","Resistor_SMD:R_0402_1005Metric","","SA0=1 -> I2C addr 0x6B","3"
+"U1","LSM6DSV32X","Package_LGA:LGA-14_3x2.5mm_P0.5mm_LayoutBorder3x4y","LSM6DSV32XTR","","1"
